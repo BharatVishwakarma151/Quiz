@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #153d8e;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background: #ef98a7;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .question {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .options button {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background: #e50d84;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 16px;
+        }
+        .options button:hover {
+            background: #8c0841;
+        }
+        .correct {
+            background: green !important;
+        }
+        .wrong {
+            background: red !important;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #a5bd98;
+            color: white;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .buttons button:hover {
+            background: #63b3ed;
+        }
+        #score {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        #timer-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: -25px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container" id="start-screen">
+        <h1>Welcome to the Quiz</h1>
+        <button id="start-button">Start Quiz</button>
+    </div>
+    
+    <div class="quiz-container" id="quiz-screen" style="display: none;">
+        <h1>Quiz App</h1>
+        <div class="progress-bar">
+            <div id="timer-text">10s</div>
+        </div>
+        <div id="quiz"></div>
+        <div class="buttons">
+            <button id="skip">Skip</button>
+            <button id="next">Next</button>
+        </div>
+        <div id="score"></div>
+    </div>
+
+    <script>
+        document.getElementById("start-button").onclick = function() {
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("quiz-screen").style.display = "block";
+            loadQuestion();
+        };
+
+        const questions = [
+        {
+        "question": "वन डे इंटरनेशनल (ODI) में किसी खिलाड़ी द्वारा बनाया गया सर्वोच्च व्यक्तिगत स्कोर क्या है?",
+      "options": ["200 रन", "219 रन", "264 रन", "275 रन"],
+      "answer": "264 रन"},
+      {
+      "question": "ध्वनि तरंगें किस माध्यम में सबसे तेज गति से यात्रा करती हैं?",
+      "options": ["ठोस", "द्रव", "गैस", "निर्वात"],
+      "answer": "ठोस"
+    },
+    {
+      "question": "रासायनिक अभिक्रिया में द्रव्य का संरक्षण किस नियम द्वारा दर्शाया जाता है?",
+      "options": ["ऊर्जा संरक्षण का नियम", "आइंस्टीन का समीकरण", "द्रव्य संरक्षण का नियम", "गति का नियम"],
+      "answer": "द्रव्य संरक्षण का नियम"
+    },
+    {
+      "question": "विद्युत प्रवाह की इकाई क्या है?",
+      "options": ["वोल्ट", "एम्पीयर", "ओम", "वाट"],
+      "answer": "एम्पीयर"
+    },
+    {
+      "question": "पीएच मान 7 से कम होने का क्या अर्थ होता है?",
+      "options": ["तटस्थ", "अम्लीय", "क्षारीय", "कोई प्रभाव नहीं"],
+      "answer": "अम्लीय"
+    },
+    {
+      "question": "परमाणु का सबसे हल्का कण कौन सा है?",
+      "options": ["न्यूट्रॉन", "प्रोटॉन", "इलेक्ट्रॉन", "आइसोटोप"],
+      "answer": "इलेक्ट्रॉन"
+    },
+    {
+      "question": "लेंस की क्षमता (पॉवर) की इकाई क्या होती है?",
+      "options": ["मीटर", "डायोप्टर", "सेकंड", "कूलम्ब"],
+      "answer": "डायोप्टर"
+    },
+    {
+      "question": "निम्नलिखित में से कौन सा गैस नोबल गैस नहीं है?",
+      "options": ["हीलियम", "ऑर्गन", "नाइट्रोजन", "निऑन"],
+      "answer": "नाइट्रोजन"
+    },
+    {
+      "question": "ऊर्जा के किस रूप को अन्य सभी रूपों में परिवर्तित किया जा सकता है?",
+      "options": ["रासायनिक ऊर्जा", "यांत्रिक ऊर्जा", "विद्युत ऊर्जा", "सभी रूप"],
+      "answer": "सभी रूप"
+    },
+    {
+      "question": "दर्पण में बनने वाली आभासी और सीधी छवि किस प्रकार के दर्पण में बनती है?",
+      "options": ["उत्तल दर्पण", "अवतल दर्पण", "समतल दर्पण", "कोई नहीं"],
+      "answer": "समतल दर्पण"
+    }
+
+        ];
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        const quizContainer = document.getElementById("quiz");
+        const scoreDisplay = document.getElementById("score");
+        const nextButton = document.getElementById("next");
+        const skipButton = document.getElementById("skip");
+        const progressBar = document.getElementById("progress");
+        const timerText = document.getElementById("timer-text");
+        
+        function startTimer() {
+            let timeLeft = 10;
+            progressBar.style.width = "100%";
+            progressBar.style.transition = "width 10s linear";
+            progressBar.style.width = "0%";
+            
+            timerText.innerText = `${timeLeft}s`;
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                timerText.innerText = `${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+        
+        function loadQuestion() {
+            clearInterval(timer);
+            quizContainer.innerHTML = "";
+            
+            const q = questions[currentQuestionIndex];
+            const questionElement = document.createElement("div");
+            questionElement.classList.add("question");
+            questionElement.innerText = q.question;
+            quizContainer.appendChild(questionElement);
+            
+            const optionsContainer = document.createElement("div");
+            optionsContainer.classList.add("options");
+            
+            q.options.forEach(option => {
+                const button = document.createElement("button");
+                button.innerText = option;
+                button.onclick = () => {
+                    clearInterval(timer);
+                    if (option === q.answer) {
+                        button.classList.add("correct");
+                        score++;
+                    } else {
+                        button.classList.add("wrong");
+                    }
+                };
+                optionsContainer.appendChild(button);
+            });
+            quizContainer.appendChild(optionsContainer);
+            
+            startTimer();
+        }
+        
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                quizContainer.innerHTML = `<h2>Quiz Completed! आपने ${score} सही उत्तर दिए!</h2>`;
+                scoreDisplay.innerText = `Total Score: ${score}/${questions.length}`;
+                nextButton.style.display = "none";
+                skipButton.style.display = "none";
+            }
+        }
+        
+        nextButton.onclick = skipButton.onclick = nextQuestion;
+    </script>
+</body>
+</html>
